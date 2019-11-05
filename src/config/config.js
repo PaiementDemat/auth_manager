@@ -1,9 +1,13 @@
 const dotenv = require('dotenv');
 
+const { version } = require('../../package.json')
+
 dotenv.config();
 
 module.exports = {
-    HOST: process.env.IP,
+    API_VERSION: version,
+
+    HOST: process.env.HOST,
     PORT: process.env.PORT,
 
     USERSDB_URL: process.env.USERSDB_URL,

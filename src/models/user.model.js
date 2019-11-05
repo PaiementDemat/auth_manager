@@ -1,12 +1,25 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+const config = require('../config/config');
+
 const Schema = mongoose.Schema;
 
 const User = new Schema({
+    _id: Schema.Types.ObjectId,
+
+    api_version: {
+        type: String,
+        default: config.API_VERSION
+    },
+
     email: {
         type: String,
         required: true,
+    },
+
+    username: {
+        type: String,
     },
 
     password: {
@@ -23,12 +36,12 @@ const User = new Schema({
         last_name: {
             type: String,
             required: true
-        }
-    }
+        },
+    },
 
+    sources: [ Schema.Types.Mixed ]
 }, {
     timestamps: true,
-    
 });
 
 User.pre('save', function(next) {

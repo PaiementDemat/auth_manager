@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use('/auth', routes)
 
-app.listen(9000, HOST, err => {
+app.listen(PORT, HOST, err => {
     if (err) throw err;
 
     console.log('Listening on http://' + HOST + ':' + PORT)
