@@ -2,8 +2,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 
-
-
 const User = require('../models/user.model');
 
 const {
@@ -26,7 +24,8 @@ const create = (user, headers) => {
             sources: [
                 {
                     host: headers['host'],
-                    browser: headers['user-agent']
+                    browser: headers['user-agent'],
+                    time: Date.now()
                 }
             ],
         })
@@ -42,19 +41,38 @@ const create = (user, headers) => {
     
 }
 
-const checkPassword = user => {
+const login = (user, headers) => {
     return new Promise(async function (resolve, reject) {
         await User.findOne({
             email: user.email
-        }, (err, user) => {
-            if (err)  reject(MAIL_NOT_FOUND_ERR);
+        }, 
+        async (err, user_found) => {
+            
+            if (err) console.log(err)
+
+            if(!user_found) reject(MAIL_NOT_FOUND_ERR);
+
+            else {
+                await bcrypt.compare(user.password, user_found.password, async (err, same) => {
+                    if (err) console.error(err);
+
+                    if (!same) {
+                        reject(WRONG_PASSWORD_ERR);
+                    }
+
+                    else {
+                        await user_found.updateOne({
+                            '$push': {
+                                sources: {
+                                    host: headers['host'],
+                                    browser: headers['user-agent'],
+                                    time: Date.now()
+                                }
+                            }
+                        })
     
-            if (user) {
-                const password = user.password;
-    
-                bcrypt.compare(password, user.password, (err, result) => {
-                    if (err) reject(WRONG_PASSWORD_ERR);
-                    if (result) resolve();
+                        resolve(user_found);
+                    }
                 })
             }
         });
@@ -63,5 +81,5 @@ const checkPassword = user => {
 
 module.exports = {
     create,
-    checkPassword
+    login
 }

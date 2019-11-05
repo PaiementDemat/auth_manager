@@ -19,6 +19,6 @@ app.listen(PORT, HOST, err => {
     console.log('Listening on http://' + HOST + ':' + PORT)
 })
 
-process.on('exit', code => {
+process.on('exit', () => {
     mongoClient.connection.close()
 })
