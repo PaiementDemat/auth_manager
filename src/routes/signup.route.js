@@ -7,6 +7,34 @@ const signupValidator = require('../validations/signup.validation')
 
 const router = express.Router();
 
+/**
+ * @swagger
+ *
+ * /signup:
+ *   post:
+ *     description: Signup
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: email
+ *         description: Email to use for log in.
+ *         required: true
+ *         type: string
+ *       - name: password
+ *         description: User's password.
+ *         required: true
+ *         type: string
+ *       - name: details
+ *         type: object,
+ *         properties:
+ *           first_name: 
+ *             type: string
+ *     
+ *     responses:
+ *       200:
+ *         description: login
+ */
+
 router.post('/', signupValidator, async function (req, res) {
     try {
 

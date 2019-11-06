@@ -5,6 +5,30 @@ const Token = require('../controllers/token.controller')
 
 const router = express.Router();
 
+/**
+ * @swagger
+ *
+ * /login:
+ *      
+*   post:
+*     description: Login to the application
+*     produces:
+*       - application/json
+*     parameters:
+*       - name: email
+*         description: Email to use for login.
+*         required: true
+*         type: string
+*       - name: password
+*         description: User's password.
+*         required: true
+*         type: string
+*         
+*     responses:
+*       200:
+*         description: login
+ */
+
 router.post('/', async function (req, res) {
     try {
         
