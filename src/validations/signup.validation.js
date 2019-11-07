@@ -11,7 +11,7 @@ const constraints = {
             minimum: 6,
             message: "must be at least 6 characters"
           }
-    },
+    }
 }
 
 const signupValidation = ( req, res, next ) => {
