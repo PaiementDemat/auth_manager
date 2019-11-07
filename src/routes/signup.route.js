@@ -35,10 +35,10 @@ const router = express.Router();
  *         description: login
  */
 
-router.post('/', signupValidator, async function (req, res) {
+router.post('/', async function (req, res) {
     try {
 
-        User.create(req.body, req.headers).then(
+        User.create(req).then(
 
             // On creation success
             () => {
