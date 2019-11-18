@@ -42,7 +42,7 @@ const create = req => {
                 if (err.code == 11000) reject(MAIL_USED_ERR);
                 else reject(err)
             }
-            if (user) resolve(user_created);
+            if (user_created) resolve(user_created);
         });
     })
 }
@@ -53,7 +53,7 @@ const login = req => {
         const user = req.body.user;
         const headers = req.headers;
 
-        const db = req.app.locals.db;
+        const db = req.app.locals.db.payment;
 
         await db.collection('users').findOne({
                 email: user.email
