@@ -25,7 +25,9 @@ MongoClient.connect(MONGO_URL,
     function (err, client) {
         if (err) console.error(err);
         if (client) {
-            app.locals.db = client.db();
+            app.locals.db = {
+                payment: client.db()
+            }
 
             app.listen(PORT, HOST, err => {
                 if (err) throw err;

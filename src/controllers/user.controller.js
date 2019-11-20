@@ -18,7 +18,7 @@ const create = req => {
         const user = req.body.user;
         const headers = req.headers;
 
-        const db = req.app.locals.db;
+        const db = req.app.locals.db.payment;
 
         const new_user = {
             email: user.email,
