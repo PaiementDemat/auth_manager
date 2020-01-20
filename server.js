@@ -32,7 +32,7 @@ MongoClient.connect(MONGO_URL,
             app.listen(PORT, HOST, err => {
                 if (err) throw err;
 
-                console.log('Listening on http://0.0.0.0:' + PORT );
+                console.log('Listening on http://' + HOST + ':' + PORT );
             });
         }
 });

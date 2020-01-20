@@ -20,6 +20,8 @@ const create = req => {
 
         const db = req.app.locals.db.payment;
 
+        console.log(user)
+
         const new_user = {
             email: user.email,
             username: user.username,
