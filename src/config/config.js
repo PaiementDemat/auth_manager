@@ -2,23 +2,15 @@ const dotenv = require('dotenv');
 
 const { version } = require('../../package.json')
 
-// dotenv.config();
-
-// module.exports = {
-//     API_VERSION: version,
-
-//     HOST: process.env.HOST,
-//     PORT: process.env.PORT,
-
-//     USERSDB_URL: process.env.USERSDB_URL,
-
-//     JWT_SECRET: process.env.JWT_SECRET,
-// }
+dotenv.config();
 
 module.exports = {
     API_VERSION: version,
 
-    USERSDB_URL: 'mongodb://mongo/payment',
+    HOST: process.env.HOST || '0.0.0.0',
+    PORT: process.env.PORT || 9999,
 
-    JWT_SECRET: 'test'
+    MONGO_URL: process.env.MONGO_URL,
+
+    JWT_SECRET: process.env.JWT_SECRET,
 }

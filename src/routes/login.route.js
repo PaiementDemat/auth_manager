@@ -32,14 +32,15 @@ const router = express.Router();
 router.post('/', async function (req, res) {
     try {
         
-        User.login(req.body, req.headers).then(
+        User.login(req).then(
 
             // On creation success
             user => {
                 const token = Token.createToken({
+                    id: user._id,
                     email: user.email,
                     username: user.username,
-                    host: user.sources[0].host
+                    host: user.source.host
                 }, '2h');
 
                 res.send({

@@ -1,81 +1,98 @@
-
+const {} = require('mongodb')
 const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
-
-const User = require('../models/user.model');
 
 const {
     MAIL_NOT_FOUND_ERR,
     MAIL_USED_ERR,
     WRONG_PASSWORD_ERR
-} = require('../errors')
+} = require('../errors');
 
-const create = (user, headers) => {
+const hashPassword = function (pwd) {
+    return bcrypt.hashSync(pwd, 10);
+}
+
+const create = req => {
 
     return new Promise(async function (resolve, reject) {
-        const new_user = new User({
-            _id: new mongoose.Types.ObjectId,
+
+        const user = req.body.user;
+        const headers = req.headers;
+
+        const db = req.app.locals.db.payment;
+
+        console.log(user)
+
+        const new_user = {
             email: user.email,
-            password: user.password,
-            details: {
+            username: user.username,
+            password: hashPassword(user.password),
+            user_details: {
                 first_name: user.details.first_name,
                 last_name: user.details.last_name
             },
-            sources: [
-                {
+            source: {
                     host: headers['host'],
                     browser: headers['user-agent'],
                     time: Date.now()
-                }
-            ],
-        })
-        
-        await new_user.save((err, user_created) => {
+            },
+
+            created_at: new Date(Date.now()).toISOString()
+        };
+
+        await db.collection('users').insertOne(new_user, (err, user_created) => {
             if (err) {
-                console.log(err)
-                reject(MAIL_USED_ERR);
+                if (err.code == 11000) reject(MAIL_USED_ERR);
+                else reject(err)
             }
-            if (user) resolve(user_created);
+            if (user_created) resolve(user_created);
         });
     })
-    
 }
 
-const login = (user, headers) => {
+const login = req => {
     return new Promise(async function (resolve, reject) {
-        await User.findOne({
-            email: user.email
-        }, 
-        async (err, user_found) => {
-            
-            if (err) console.log(err)
 
-            if(!user_found) reject(MAIL_NOT_FOUND_ERR);
+        const user = req.body.user;
+        const headers = req.headers;
 
-            else {
-                await bcrypt.compare(user.password, user_found.password, async (err, same) => {
-                    if (err) console.error(err);
+        const db = req.app.locals.db.payment;
 
-                    if (!same) {
-                        reject(WRONG_PASSWORD_ERR);
-                    }
+        await db.collection('users').findOne({
+                email: user.email
+            }, 
+            async (err, user_found) => {
+                
+                if (err) console.log(err)
 
-                    else {
-                        await user_found.updateOne({
-                            '$push': {
-                                sources: {
-                                    host: headers['host'],
-                                    browser: headers['user-agent'],
-                                    time: Date.now()
+                if(!user_found) reject(MAIL_NOT_FOUND_ERR);
+
+                else {
+                    await bcrypt.compare(user.password, user_found.password, async (err, same) => {
+                        if (err) console.log(err);
+
+                        if (!same) {
+                            reject(WRONG_PASSWORD_ERR);
+                        }
+
+                        else {
+                            await db.collection('users').updateOne({
+                                email: user.email
+                            }, {
+                                $set: {
+                                    source: {
+                                        host: headers['host'],
+                                        browser: headers['user-agent'],
+                                        time: Date.now()
+                                    } 
                                 }
                             }
-                        })
-    
-                        resolve(user_found);
-                    }
-                })
-            }
-        });
+                            );
+        
+                            resolve(user_found);
+                        }
+                    })
+                }
+            });
     })
 }
 
