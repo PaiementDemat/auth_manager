@@ -17,6 +17,8 @@ app.use('/auth', routes)
 
 // Connect to mongo
 
+console.log(MONGO_URL)
+
 MongoClient.connect(MONGO_URL, 
     {
         useNewUrlParser: true,
@@ -38,5 +40,5 @@ MongoClient.connect(MONGO_URL,
 });
 
 process.on('exit', () => {
-    mongoClient.close()
+    MongoClient.close()
 })
